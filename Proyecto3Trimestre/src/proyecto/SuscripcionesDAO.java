@@ -24,7 +24,7 @@ public class SuscripcionesDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
+         
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -112,6 +112,23 @@ public class SuscripcionesDAO {
     	catch(SQLException ex) {
     		System.out.println("Error al eliminar al usuario");
     	}
+    }
+    
+    //Obtener el id de la suscripcion
+    public int obtenerID() {
+    	int id = 0;
+    	String sql = "SELECT idSuscripción FROM Suscripciones Order by idSuscripción DESC LIMIT 1";
+    	try {
+    		  PreparedStatement sentencia = conexion.prepareStatement(sql);
+    		  ResultSet rs = sentencia.executeQuery(); 
+    		  while(rs.next()) {
+    			  id = rs.getInt("idSuscripción");
+    		  }
+    	}catch(SQLException ex) {
+    		System.out.println("Error al buscar el id");
+    	}
+    	
+    	return id;
     }
 }
 

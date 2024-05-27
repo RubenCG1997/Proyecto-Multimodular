@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class CuentasDAO {
 	
@@ -24,7 +25,7 @@ public class CuentasDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
+           
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -37,7 +38,7 @@ public class CuentasDAO {
     public void create(Cuentas cuenta) {
         if (cuenta != null) {
             String sql = "INSERT INTO Cuentas ( username, fecha_de_creacion,fkUsuario, fkSuscripciones )"
-            		+ " VALUES(?, now(), ?, ?, ?)";
+            		+ " VALUES(?, now(), ?, ?)";
 
             try {
                 PreparedStatement sentencia = conexion.prepareStatement(sql);
@@ -106,7 +107,26 @@ public class CuentasDAO {
     	}
     }
     
-
+    //Comprueba si el usuario existe en la lista creada pasando el dni o email
+    public boolean usernameExiste(String username) {
+    	
+    	boolean existe = false;
+    	String sql = "SELECT username FROM Cuentas WHERE username=?";
+    	try {
+    		PreparedStatement sentencia = conexion.prepareStatement(sql);
+    		sentencia.setString(1,username);
+    		ResultSet rs = sentencia.executeQuery(); 
+    		if(rs.next()) {
+    			existe =true;
+    		}
+    		if(existe) {
+    			System.out.println("El username existe,pon otro");
+    		}
+    	}catch(SQLException ex){
+    		System.out.println("Error al buscar el username");
+    	}
+    	return existe;
+    	 	
+    }
     
-	
 }

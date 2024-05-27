@@ -27,7 +27,7 @@ public class UsuariosDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
+            
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -87,7 +87,7 @@ public class UsuariosDAO {
     					boolean estado = rs.getBoolean("estado");
     					boolean rol = rs.getBoolean("rol");
     					
-    					usuario = new Usuarios(dni, nombre, apellidos, email, contrasenna, fecha_de_nacimiento, estado, rol);
+    					usuario = new Usuarios(dni, nombre, apellidos, email, contrasenna, fecha_de_nacimiento, rol, estado);
     				}
     		} catch (SQLException ex) {
     			System.out.println("Error al consultar un usuario");
@@ -183,6 +183,31 @@ public class UsuariosDAO {
     	
 		return existe;
     	
+    }
+    
+    //Devuelve usuario si existe pasandole el email y la contraseña
+    public Usuarios inicioSesion(String email,String contrasenna) {
+    	Usuarios usuario = null;
+    	String sql = "SELECT * FROM USUARIOS WHERE email=? AND contrasenna=?";
+    	try {
+    		PreparedStatement sentencia = conexion.prepareStatement(sql);
+    		sentencia.setString(1, email);
+    		sentencia.setString(2,contrasenna);
+			ResultSet rs = sentencia.executeQuery();
+			if(rs.next()) {
+				String dni = rs.getString("dni");
+				String nombre = rs.getString("nombre");
+				String apellidos = rs.getString("apellidos");
+				String fecha_de_nacimiento = rs.getString("fecha_de_nacimiento");
+				boolean estado = rs.getBoolean("estado");
+				boolean rol = rs.getBoolean("rol");
+				usuario = new Usuarios(dni,nombre,apellidos,email,contrasenna,fecha_de_nacimiento,rol,estado);
+			}
+    	}
+    	catch(SQLException ex) {
+    		System.out.println("No se encontró ningún usuario");
+    	}
+    	return usuario;
     }
 
 

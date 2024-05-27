@@ -2,6 +2,7 @@ package proyecto;
 
 import java.util.Scanner;
 
+import proyecto.Suscripciones.CUOTA;
 import proyecto.Suscripciones.TIPO;
 
 public class APP {
@@ -23,20 +24,56 @@ public class APP {
 						System.out.println("El correo o dni ya existe, no se puede crear el usuario");
 					}
 					else {
-						bd.create(usuario);
 						if(!usuario.isRol()) {
 							System.out.println("Creando Cuenta");
 							System.out.println("==============");
+							CuentasDAO bdCuenta = new CuentasDAO();
+							Cuentas cuenta = crearCuentas(usuario.getDni());
+							bd.create(usuario);
+							bdCuenta.create(cuenta);
 						}
 					}
 
 				break;
-				case 2:
+				case 2: 
 					System.out.println("Inicio de sesión");
 					System.out.println("================");
-					
-					
-					
+					Usuarios usuarioConectado = introduceDatos();
+					if(usuarioConectado == null) {
+						System.out.println("Email o contraseña incorrecta");
+					}
+					else {
+						if(usuarioConectado.isRol()) {
+							int elecMenuAdmin;
+							do {
+								elecMenuAdmin = MenuAdministrador();
+								switch(elecMenuAdmin) {
+								case 1:break;
+								case 2:break;
+								case 3:break;
+								case 4:break;
+								case 5:break;
+								case 6:System.out.println("Cerrando sesión");break;
+								default:System.out.println("Opción incorrecta");break;
+								}
+							}while(elecMenuAdmin!=6);
+							
+						}
+						else {
+							int elecMenuUsu;
+							do {
+								elecMenuUsu = MenuUsuario();
+								switch(elecMenuUsu) {
+								case 1: break;
+								case 2: break;
+								case 3: break;
+								case 4: break;
+								case 5: System.out.println("Cerrando sesión");break;
+								default:System.out.println("Opción incorrecta");break;
+								}
+							}while(elecMenuUsu!=5);
+						}
+					}
 				break;
 				case 3:
 					System.out.println("Saliendo.......");
@@ -48,7 +85,7 @@ public class APP {
 		
 	
 	}
-
+	
 	private static int MenuPrincipal() {
 		
 	    var sc = new Scanner(System.in);
@@ -66,6 +103,44 @@ public class APP {
 	            return eleccion;
 	}
 	
+	private static int MenuUsuario() {
+	
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Principal del Usuario");
+		System.out.println("==============");
+		System.out.println("1.Opciones con publicaciones");
+		System.out.println("2.Interacción con otras cuentas");
+		System.out.println("3.Opciones con listas");
+		System.out.println("4.Administrar cuenta");
+		System.out.println("5.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	
+	private static int MenuAdministrador() {
+		
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Principal del Administrador");
+		System.out.println("==============");
+		System.out.println("1.CRUD Autores");
+		System.out.println("2.CRUD Editoriales");
+		System.out.println("3.CRUD Publicaciones");
+		System.out.println("4.Información sobre las suscripciones");
+		System.out.println("5.Administrar cuenta");
+		System.out.println("6.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	
+	//Crea usuario
 	public static Usuarios crearUsuario() {
 		
 		Scanner sc = new Scanner(System.in);
@@ -105,17 +180,29 @@ public class APP {
 		return usuario;
 		
 	}
-	
-	/*public static Cuentas crearCuentas(String dni) {
+	//Crea cuenta
+	public static Cuentas crearCuentas(String dni) {
+		
+		SuscripcionesDAO bd = new SuscripcionesDAO();
+		CuentasDAO bdCuenta = new CuentasDAO();
 		
 		Scanner sc = new Scanner(System.in);
+		String username;
+		do {
+			System.out.println("Introduce el username");
+			 username = sc.nextLine().toLowerCase();
+		}
+		while(bdCuenta.usernameExiste(username));
 		
-		System.out.println("Introduce el username");
-		String username = sc.nextLine();
 		infoSuscripciones();
+		Suscripciones suscripcion = crearSuscripcion();
+		int idSuscripcion = bd.obtenerID();
 		
+		Cuentas cuenta = new Cuentas(username,dni,idSuscripcion);
+		return cuenta;
 		
-	}*/
+	}
+	//Muestra la información de las suscripciones, la cuota y el precio
 	private static void infoSuscripciones(){
 		
 			System.out.println("================================");
@@ -139,10 +226,72 @@ public class APP {
 	        System.out.println("================================");
 		
 	}
+	//Crear suscripcion
+	private static Suscripciones crearSuscripcion() {
+		
+		SuscripcionesDAO bd = new SuscripcionesDAO();
+		TIPO tipo = tipo();
+		CUOTA cuota = cuota();
+		Suscripciones suscripcion = new Suscripciones(tipo,cuota);
+		bd.create(suscripcion);
+		return suscripcion;
+		
+	}
+	//Elegir tipo de suscripción
+	private static TIPO tipo () {
+		
+		Scanner sc = new Scanner(System.in);
+		String elecTipo;
+		TIPO tipo = null;
+		do {
+				System.out.println("Introduzca el tipo");
+			 	elecTipo = sc.next().toUpperCase();
+				switch(elecTipo) {
+				case "INDIVIDUAL" :  tipo= TIPO.INDIVIDUAL ;break;
+				case "DUO" :  tipo = TIPO.DUO;break;
+				case "FAMILIAR" : tipo = TIPO.FAMILIAR; break;
+				default : System.out.println("Tipo Incorrecto");break;
+				}
+		}
+		while(!elecTipo.equals("INDIVIDUAL")&& !elecTipo.equals("DUO") && !elecTipo.equals("FAMILIAR"));
+		
+		return tipo;
+	}
 	
-	/*private TIPO tipo(int eleccion) {
+	//Elegir una cuota de suscripción
+	private static CUOTA cuota(){
+
+		Scanner sc = new Scanner(System.in);
+		String elecCuota;
+		CUOTA cuota = null;
+		do {
+				System.out.println("Introduzca la cuota");
+				elecCuota = sc.next().toUpperCase();
+				switch(elecCuota) {
+				case "MENSUAL" :  cuota= CUOTA.MENSUAL ;break;
+				case "ANUAL" :  cuota = CUOTA.ANUAL;break;
+				default : System.out.println("Tipo Incorrecto");break;
+				}
+		}
+		while(!elecCuota.equals("MENSUAL")&& !elecCuota.equals("ANUAL"));
 		
-		
-		
-	}*/
+		return cuota;
+	}
+	
+	//Introduce email y contrasenna y devuelve el usuario
+	public static Usuarios introduceDatos() {
+		UsuariosDAO bd = new UsuariosDAO();
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce tu correo electrónico");
+		String email = sc.nextLine().toLowerCase();
+		System.out.println("Introduce tu contraseña");
+		String contraseña = sc.nextLine();
+		Usuarios usuario = bd.inicioSesion(email, contraseña);
+		return usuario;
+	}
+	
+
 }
+	
+	
+
