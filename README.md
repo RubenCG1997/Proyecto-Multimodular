@@ -44,4 +44,5 @@ El proyecto consiste en desarrollar una aplicación que permite a los usuarios i
 
 ## Entregas
 
-- ** 19/05/24: Subida de la parte de base de datos. Modelo conceptual,lógico,relacional y físico. UML.
+- **19/05/24**: Subida de la parte de base de datos. Modelo conceptual,lógico,relacional y físico. UML.
+- **27/05/24**: Subida de cambios de primary key en la base de datos.Se sube proyecto en java.Se completa el menú principal.Se añaden metodos para crear usuarios,cuentas,suscripciones,comprobaciones en la base de datos sobre las mismas y se comienza el menu de usuario y administrador.
