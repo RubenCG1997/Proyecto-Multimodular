@@ -9,6 +9,7 @@ dni varchar(9) primary key,
 nombre varchar(20) not null,
 apellidos varchar(40) not null,
 email varchar(40) not null unique,
+contrasenna varchar(40) not null,
 fecha_de_nacimiento date not null,
 rol boolean not null default false,
 estado boolean not null default true
@@ -18,29 +19,29 @@ estado boolean not null default true
 
 CREATE TABLE Suscripciones(
 idSuscripción int primary key auto_increment,
-nombre varchar(20) not null,
-precio double unsigned not null,
-estado boolean not null default true
+tipo ENUM('INDIVIDUAL','DUO','FAMILIAR') NOT NULL,
+cuota ENUM('MENSUAL','ANUAL') not null,
+precio double not null
 );
 
 -- Creacion de la tabla Autores
 
 CREATE TABLE Autores(
-idAutor int primary key auto_increment,
 nombre varchar(20) not null,
 apellidos varchar(40) not null,
 fecha_de_nacimiento date not null,
 biografía varchar(150),
-estado boolean not null default true
+estado boolean not null default true,
+primary key(nombre,apellidos)
 );
 
 -- Creación de la tabla Editorial --
 
 CREATE TABLE Editoriales(
 cif varchar(9) primary key,
-nombre varchar (30) not null,
-direccion varchar(30) not null,
-telefono varchar(9) not null,
+nombre varchar (30) unique not null,
+direccion varchar(30) unique not null,
+telefono varchar(9) unique not null,
 cp varchar(5) not null,
 estado boolean not null default true
 );
@@ -66,11 +67,12 @@ ON UPDATE CASCADE
 
 CREATE TABLE Publicaciones(
 isbn varchar(13) primary key,
-titulo varchar(20) not null,
+titulo varchar(50) not null,
 fecha_de_lanzamiento date not null,
 estado boolean not null default true,
-fkAutor int not null,
-FOREIGN KEY(fkAutor) REFERENCES Autores(idAutor)
+fkAutorNombre varchar(20) not null,
+fkAutorApellidos varchar(40) not null,
+FOREIGN KEY(fkAutorNombre,fkAutorApellidos) REFERENCES Autores(nombre,apellidos)
 ON DELETE CASCADE
 ON UPDATE CASCADE,
 fkEditorial varchar(9)not null,
@@ -187,3 +189,17 @@ ON DELETE CASCADE
 ON UPDATE CASCADE
 );
 
+SELECT*FROM SUSCRIPCIONES;
+SELECT*FROM Usuarios;
+SELECT*FROM CUENTAS;
+SELECT*FROM Editoriales;
+SELECT*FROM Autores;
+SELECT*FROM publicaciones;
+Select*from comics;
+Select*from Ebooks;
+Select*from Listas;
+Select*from resennas;
+Select*from ListaContienePublicaciones;
+Select*from Megusta;
+Select*from CuentaSigueCuenta;
+Select*from cuentaleepublicacion;
