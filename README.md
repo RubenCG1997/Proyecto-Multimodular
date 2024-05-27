@@ -1,25 +1,43 @@
 # Proyecto-Multimodular
-Biblioteca Online inspirada en spotify
-# Objetivos
-El proyecto consiste en desarrollar una aplicación que permite al usuario poder interactuar con publicaciones y entre usuarios. Los usuarios se diferencian según el rol. Si el rol está activo se crearía un administrador, el cual se encarga del mantenimiento de la aplicación. Mientras que el usuario normal tiene las funciones anteriormente dichas.
-# Funcionalidades
-●Menú principal: Podemos crear usuario y/o cuenta, inicar sesion y salir.
-●Menú de Usuario: Interactuar con las publicaciones,otras cuentas,listas,administrar la cuenta y salir
-●Menú de Administrador: CRUD de autores,editoriales,publicaciones, información de las suscripciones y salir.
-# Clases y deficiones:
-●Usuario: Acceso a la base de datos mediante clase DAO con el mismo nombre, ademas diferentes comprobaciones para poder crear un Usuario que se irán especificando mientras se realizan la entrega de actividades.
-●Suscripciones: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un Suscripciones que se irán especificando mientras se realizan la entrega de actividades.
-●Cuenta: Acceso a la base de datos mediante clase DAO con el mismo nombre, ademas diferentes comprobaciones para poder crear un Cuenta que se irán especificando mientras se realizan la entrega de actividades.
-●CuentaSigueCuenta: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un CuentaSigueCuenta que se irán especificando mientras se realizan la entrega de actividades.
-●Megusta: Acceso a la base de datos mediante clase DAO con el mismo nombre, ademas diferentes comprobaciones para poder crear un Megusta que se irán especificando mientras se realizan la entrega de actividades.
-●Lista: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un Lista que se irán especificando mientras se realizan la entrega de actividades.
-●CuentaLeePublicacion: Acceso a la base de datos mediante clase DAO con el mismo nombre, ademas diferentes comprobaciones para poder crear un CuentaLeePublicacion que se irán especificando mientras se realizan la entrega de actividades.
-●ListaContienePublicaciones: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un ListaContienePublicaciones que se irán especificando mientras se realizan la entrega de actividades.
-●Reseñas: Acceso a la base de datos mediante clase DAO con el mismo nombre, ademas diferentes comprobaciones para poder crear un Reseñas que se irán especificando mientras se realizan la entrega de actividades.
-●Autores: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un Autores que se irán especificando mientras se realizan la entrega de actividades.
-●Publicaciones: No tiene DAO.
-●Editoriales: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un Editoriales que se irán especificando mientras se realizan la entrega de actividades.
-●Comics: Acceso a la base de datos mediante clase DAO con el mismo nombre, ademas diferentes comprobaciones para poder crear un Comics que se irán especificando mientras se realizan la entrega de actividades.
-●Ebooks: Acceso a la base de datos mediante clase DAO con el mismo nombre,ademas diferentes comprobaciones para poder crear un Ebooks que se irán especificando mientras se realizan la entrega de actividades.
 
-# Entregas
+Biblioteca Online inspirada en Spotify.
+
+## Objetivos
+
+El proyecto consiste en desarrollar una aplicación que permite a los usuarios interactuar con publicaciones y entre ellos. Los usuarios se diferencian según su rol. Si el rol es de administrador, este se encarga del mantenimiento de la aplicación, mientras que el usuario normal tiene las funciones mencionadas anteriormente.
+
+## Funcionalidades
+
+### Menú principal:
+- Crear usuario y/o cuenta
+- Iniciar sesión
+- Salir
+
+### Menú de Usuario:
+- Interactuar con las publicaciones
+- Interactuar con otras cuentas
+- Gestionar listas
+- Administrar la cuenta
+- Salir
+
+### Menú de Administrador:
+- CRUD de autores, editoriales y publicaciones
+- Gestionar información de suscripciones
+- Salir
+
+## Clases y Definiciones
+
+- **Usuario**: Acceso a la base de datos mediante clase DAO con el mismo nombre, además de diferentes comprobaciones para poder crear un Usuario que se irán especificando en futuras entregas.
+- **Suscripciones**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de suscripciones.
+- **Cuenta**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de cuentas.
+- **CuentaSigueCuenta**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de relaciones entre cuentas.
+- **Megusta**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de "me gusta".
+- **Lista**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de listas.
+- **CuentaLeePublicacion**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de registros de lectura.
+- **ListaContienePublicaciones**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de listas que contienen publicaciones.
+- **Reseñas**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de reseñas.
+- **Autores**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de autores.
+- **Publicaciones**: No tiene DAO.
+- **Editoriales**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de editoriales.
+- **Comics**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de cómics.
+- **Ebooks**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de ebooks.
