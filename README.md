@@ -41,3 +41,7 @@ El proyecto consiste en desarrollar una aplicación que permite a los usuarios i
 - **Editoriales**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de editoriales.
 - **Comics**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de cómics.
 - **Ebooks**: Acceso a la base de datos mediante clase DAO con el mismo nombre, con comprobaciones para la creación de ebooks.
+
+## Entregas
+
+- ** 19/05/24: Subida de la parte de base de datos. Modelo conceptual,lógico,relacional y físico. UML.
