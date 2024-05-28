@@ -5,6 +5,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import proyecto.Suscripciones.CUOTA;
+import proyecto.Suscripciones.TIPO;
 
 public class SuscripcionesDAO {
 
@@ -56,8 +62,6 @@ public class SuscripcionesDAO {
    
     //Muestra una suscrpcion en la tabla suscripciones
     public Suscripciones read(int id) {
-
-
     	
     	Suscripciones suscripciones = null;
     	String sql = "SELECT * FROM Suscripciones WHERE idSuscripción=?";
@@ -82,7 +86,7 @@ public class SuscripcionesDAO {
     		return suscripciones;
     	}
     
-    //Modifica usuario de la tabla usuario???????
+    //Actualiza la suscripcion
     public void update(Suscripciones suscripcion) {
     	if(suscripcion != null) {
     		String sql = "UPDATE Suscripciones SET tipo=?, cuota=?, precio=?"
@@ -114,7 +118,7 @@ public class SuscripcionesDAO {
     	}
     }
     
-    //Obtener el id de la suscripcion
+    //Obtener el id de la suscripcion justo al crear la cuenta
     public int obtenerID() {
     	int id = 0;
     	String sql = "SELECT idSuscripción FROM Suscripciones Order by idSuscripción DESC LIMIT 1";
@@ -130,6 +134,54 @@ public class SuscripcionesDAO {
     	
     	return id;
     }
+    //Obtener username e información del tipo y cuota del precio guardados en un array de strign
+    public ArrayList<String[]> infoTotal(){
+    	
+    	ArrayList<String[]>lista = new ArrayList<>();
+    	String sql= "SELECT Cuentas.username, Suscripciones.tipo, Suscripciones.cuota, Suscripciones.precio FROM Cuentas " +
+                "INNER JOIN Suscripciones ON Cuentas.fkSuscripciones = Suscripciones.idSuscripción";
+    	
+    	try {
+            PreparedStatement sentencia = conexion.prepareStatement(sql);
+            ResultSet rs = sentencia.executeQuery();
+
+            while (rs.next()) {
+            	 String username = rs.getString("username");
+                 String tipo = rs.getString("tipo");
+                 String cuota = rs.getString("cuota");
+                 double precio = rs.getDouble("precio");
+                 String[] fila = {username, tipo, cuota, String.valueOf(precio)};
+                 lista.add(fila);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error al obtener la información total de las suscripciones:");
+        }
+
+        return lista;
+    }
+    public Map<String, Integer> cantidadSuscripcionesPorTipoYCuota() {
+        Map<String, Integer> cantidadPorTipoYCuota = new HashMap<>();
+        String sql = "SELECT tipo, cuota, COUNT(*) AS cantidad FROM Suscripciones GROUP BY tipo, cuota";
+        
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement(sql);
+            ResultSet rs = sentencia.executeQuery();
+            
+            while (rs.next()) {
+                String tipoString = rs.getString("tipo");
+                String cuotaString = rs.getString("cuota");
+                int cantidad = rs.getInt("cantidad");
+                
+                String clave = tipoString + "-" + cuotaString;
+                cantidadPorTipoYCuota.put(clave, cantidad);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error al consultar las suscripciones");
+        }
+        
+        return cantidadPorTipoYCuota;
+    }
 }
+
 
 

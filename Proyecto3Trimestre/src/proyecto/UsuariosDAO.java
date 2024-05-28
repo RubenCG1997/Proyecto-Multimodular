@@ -113,7 +113,7 @@ public class UsuariosDAO {
         		sentencia.executeUpdate();
         	}
     		catch(SQLException ex) {
-    			System.out.println("El usuario que se quiere modificar no existe");
+    			System.out.println("El usuario que se quiere modificar tiene datos en comun con otro, no se puede cambiar");
     		}
     	}
     	

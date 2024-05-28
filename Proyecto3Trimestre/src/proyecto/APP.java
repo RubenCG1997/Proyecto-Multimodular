@@ -2,6 +2,9 @@ package proyecto;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import proyecto.Suscripciones.CUOTA;
@@ -14,12 +17,12 @@ public class APP {
 		Scanner sc = new Scanner(System.in);
 		int eleccion;
 		do {
+			UsuariosDAO bd = new UsuariosDAO();
 			 eleccion = MenuPrincipal();
 			switch(eleccion) {
 				case 1:
 					System.out.println("Creando Usuario");
 					System.out.println("===============");
-					UsuariosDAO bd = new UsuariosDAO();
 					Usuarios usuario = crearUsuario();
 					
 					if(bd.UsuarioExiste(usuario.getDni(), usuario.getEmail())){
@@ -198,8 +201,34 @@ public class APP {
 									}
 									while(elecMenuPubli!=5);
 								break;
-								case 4:break;
-								case 5:break;
+								case 4:
+									SuscripcionesDAO bdSuscripciones = new SuscripcionesDAO();
+									int elecSuscrip;
+									do {
+										elecSuscrip = datosSuscripciones();
+										switch(elecSuscrip) {
+										case 1:
+											System.out.println("Total de suscripciones");
+											bdSuscripciones.infoTotal().stream()
+											.sorted(Comparator.comparing(array->array[0]))
+										    .map(array -> String.join(" ", array))
+										    .forEach(System.out::println);
+										break;
+										case 2:
+											System.out.println("Ver cantidad de suscripciones por tipo-cuota");
+											Map<String,Integer>listado = new HashMap<>();
+											listado=bdSuscripciones.cantidadSuscripcionesPorTipoYCuota();
+											System.out.println(listado.toString());
+										break;
+										case 3:System.out.println("Volviendo al menú del administrador"); break;
+										default:System.out.println("Opcion incorrecta");
+										}
+									}
+									while(elecSuscrip!=3);
+								break;
+								case 5:
+									bd.update(modificar(usuarioConectado));
+								break;
 								case 6:System.out.println("Cerrando sesión");break;
 								default:System.out.println("Opción incorrecta");break;
 								}
@@ -230,7 +259,6 @@ public class APP {
 		}
 		while(eleccion!=3);
 		
-	
 	}
 
 	//Menu principal
@@ -279,7 +307,7 @@ public class APP {
 		System.out.println("2.CRUD Editoriales");
 		System.out.println("3.CRUD Publicaciones");
 		System.out.println("4.Información sobre las suscripciones");
-		System.out.println("5.Administrar cuenta");
+		System.out.println("5.Modificar información de la cuent");
 		System.out.println("6.Salir");
 		System.out.println("==============");
 		System.out.println("Introduce una opción: ");
@@ -780,7 +808,6 @@ public class APP {
 	}
 	//Modificar publicacion
 	private static Publicaciones modiPublicaciones(Publicaciones publicacion) {
-		
 		Scanner sc = new Scanner(System.in);
 		System.out.println(publicacion.toString());
 		String titulo,nombreAutor,apellidoAutor,cif;
@@ -828,6 +855,62 @@ public class APP {
 			return ebook;
 			
 		}
+	}
+	//Menu de información sobre las sucripciones
+	private static int datosSuscripciones() {
+
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Datos Suscrpciones");
+		System.out.println("==============");
+		System.out.println("1.Mostrar listado completo");
+		System.out.println("2.Mostrar según tipo y/o cuota");
+		System.out.println("3.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+				
+	}
+	//Modifica usuario
+	private static Usuarios modificar(Usuarios usuario) {
+		
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Modifica la cuenta");
+		String nombre,apellidos,email,contrasenna;
+		boolean estado;
+		boolean rol;
+		System.out.println("Modifica el nombre, si no pulsa enter");
+		nombre=sc.nextLine().toLowerCase();
+		System.out.println("Modifica los apellidos, si no pulsa enter");
+		apellidos=sc.nextLine().toLowerCase();
+		System.out.println("Modifica el telefono,si no pulsa enter");
+		email=sc.nextLine().toLowerCase();
+		System.out.println("Modifica la contrasenna, si no pulsa enter");
+		contrasenna=sc.nextLine().toLowerCase();
+
+		if(nombre.isEmpty()) {
+			nombre = usuario.getNombre();
+		}
+		if(apellidos.isEmpty()) {
+			apellidos = usuario.getApellidos();
+		}
+		if(email.isEmpty()) {
+			email = usuario.getEmail();
+		}
+		if(contrasenna.isEmpty()) {
+			contrasenna = usuario.getContrasenna();
+		}
+		
+		usuario.setNombre(nombre);
+		usuario.setApellidos(apellidos);
+		usuario.setEmail(email);
+		usuario.setContrasenna(contrasenna);
+	 
+		System.out.println(usuario.toString());	
+	
+		return usuario;
 	}
 }	
 	
