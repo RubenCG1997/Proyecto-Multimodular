@@ -97,6 +97,34 @@ public class EbooksDAO {
     		return lista;
     }
     
+    public ArrayList<Publicaciones> readPorTitulo(String titulo, ArrayList<Publicaciones> lista) {
+        Ebooks ebook = null;
+        String sql = "SELECT Publicaciones.*, Ebooks.formato FROM Publicaciones INNER JOIN Ebooks ON Publicaciones.isbn = Ebooks.pkfkPublicacion WHERE Publicaciones.titulo LIKE ?";
+        
+        try {
+            PreparedStatement sentencia = conexion.prepareStatement(sql);
+            sentencia.setString(1,titulo + "%"); 
+            ResultSet rs = sentencia.executeQuery();
+            while (rs.next()) {
+                String isbn = rs.getString("isbn");
+                String tituloN = rs.getString("titulo");
+                String fecha_de_lanzamiento = rs.getString("fecha_de_lanzamiento");
+                boolean estado = rs.getBoolean("estado");
+                String fkAutorNombre = rs.getString("fkAutorNombre");
+                String fkAutorApellidos = rs.getString("fkAutorApellidos");
+                String fkEditorial = rs.getString("fkEditorial");
+                String formato = rs.getString("formato");
+                
+                ebook = new Ebooks(isbn, tituloN, fecha_de_lanzamiento, estado, fkAutorNombre, fkAutorApellidos, fkEditorial, formato);
+                lista.add(ebook);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error al consultar el ebook por título: " + ex.getMessage());
+        }
+        return lista;
+    }
+    
+    
     //Modificar comic
     public void update(Ebooks ebook) {
     	if(ebook != null) {
@@ -135,4 +163,5 @@ public class EbooksDAO {
     		System.out.println("Error al eliminar el ebook ");
     	}
     }
+
 }

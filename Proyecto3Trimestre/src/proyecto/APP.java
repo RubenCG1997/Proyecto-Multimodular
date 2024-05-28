@@ -237,12 +237,80 @@ public class APP {
 						}
 						else {
 							int elecMenuUsu;
+							ResennasDAO bdRe = new ResennasDAO();
+							CuentasDAO bdCuen = new CuentasDAO();
+							ComicsDAO bdComic = new ComicsDAO();
+							EbooksDAO bdEbook = new EbooksDAO();
+							CuentaSigueCuentaDAO bdFollow = new CuentaSigueCuentaDAO();
+							Cuentas cuenta=obtenerCuenta(usuarioConectado.getDni());
 							do {
 								elecMenuUsu = MenuUsuario();
 								switch(elecMenuUsu) {
-								case 1: break;
-								case 2: break;
-								case 3: break;
+								case 1:
+									int elecRese;
+									do {
+										elecRese=MenuResennas();
+										switch(elecRese) {
+										case 1:
+											  ArrayList<Publicaciones>lista= new ArrayList<>();
+											  String titulo = buscaTitulo();
+											  lista = bdComic.readPorTitulo(titulo,lista);
+											  lista = bdEbook.readPorTitulo(titulo,lista);
+											  Publicaciones publicacionSeleccionada = elecPublicaciones(lista);
+											  if(publicacionSeleccionada != null) {
+												  bdRe.create(crearRese(bdCuen.obtenerId(cuenta.getUsername()),publicacionSeleccionada.getIsbn()));  
+											  }
+											 
+										break;
+										case 2:
+											ArrayList<Resennas>listaReseBorr = new ArrayList<>();
+											listaReseBorr = bdRe.read(bdCuen.obtenerId(cuenta.getUsername()));
+											if(!listaReseBorr.isEmpty()) {
+												Resennas resenna = borrarRese(listaReseBorr);
+												bdRe.delete(resenna.getPkfkCuenta(),resenna.getPkfkPublicacion());
+											}
+											else {
+												System.out.println("No tienes reseñas");
+											}
+										break;
+										case 3:
+											ArrayList<Resennas>listaRese = new ArrayList<>();
+											listaRese = bdRe.read(bdCuen.obtenerId(cuenta.getUsername()));
+											if(!listaRese.isEmpty()) {
+												System.out.println(listaRese.toString());
+											}
+											else {
+												System.out.println("No tienes reseñas");
+											}
+										break;
+										case 4:System.out.println("Volviendo al menú del usuario"); break;
+										default:System.out.println("Opcion incorrecta");break;
+										}
+									}
+									while(elecRese!=4);
+								break;
+								case 2:
+									int elecFollow;
+									do {
+										elecFollow = MenuFollow();
+										switch(elecFollow) {
+										case 1:
+											bdFollow.create(seguir(bdCuen.obtenerId(cuenta.getUsername())));
+										break;
+										case 2:
+											bdFollow.delete(seguir(bdCuen.obtenerId(cuenta.getUsername())).getIdSeguido(),bdCuen.obtenerId(cuenta.getUsername()));
+										break;
+										case 3:
+											bdFollow.contarSeguidosSeguidores(bdCuen.obtenerId(cuenta.getUsername()));
+										break;
+										case 4:System.out.println("Volviendo al menú del usuario");break;
+										default:System.out.println("Opcion incorrecta");break;
+										}
+									}
+									while(elecFollow!=4);
+								break;
+								case 3:
+								break;
 								case 4: break;
 								case 5: System.out.println("Cerrando sesión");break;
 								default:System.out.println("Opción incorrecta");break;
@@ -285,7 +353,7 @@ public class APP {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Menu Principal del Usuario");
 		System.out.println("==============");
-		System.out.println("1.Opciones con publicaciones");
+		System.out.println("1.Opciones con reseñas");
 		System.out.println("2.Interacción con otras cuentas");
 		System.out.println("3.Opciones con listas");
 		System.out.println("4.Administrar cuenta");
@@ -764,6 +832,7 @@ public class APP {
 		String isbn = sc.nextLine().toLowerCase().trim();
 		return isbn;
 	}
+
 	//Elegir publicacion
 	private static Publicaciones elecPublicaciones(ArrayList<Publicaciones>lista) {
 
@@ -875,6 +944,7 @@ public class APP {
 	}
 	//Modifica usuario
 	private static Usuarios modificar(Usuarios usuario) {
+
 		
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Modifica la cuenta");
@@ -912,6 +982,122 @@ public class APP {
 	
 		return usuario;
 	}
+	//Menú para hacer reseñas
+	private static int MenuResennas() {
+		
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Reseñas");
+		System.out.println("==============");
+		System.out.println("1.Crear reseña");
+		System.out.println("2.Borrar reseña");
+		System.out.println("3.Ver tus reseñas");
+		System.out.println("4.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	//Obtener cuenta para el usuario
+	private static Cuentas obtenerCuenta(String dni) {
+		CuentasDAO bd = new CuentasDAO();
+		Cuentas cuenta;
+		cuenta= bd.read(dni);
+		return cuenta;
+	}
+	
+	//Busca publicacion por titulo
+	private static String buscaTitulo() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el titulo");
+		String titulo = sc.nextLine().toLowerCase().trim();
+		return titulo;
+	}
+	//Realizar reseña
+	private static Resennas crearRese(int idCuenta,String isbn) {
+		final boolean  estado = true;
+		Scanner sc = new Scanner(System.in);
+		Resennas resenna;
+		System.out.println("Introduce la puntuación entre 1 y 5");
+		int puntuacion = sc.nextInt();
+		sc.nextLine();
+		System.out.println("Introduce tu opinion");
+		String opinion = sc.nextLine();
+		
+		resenna = new Resennas(idCuenta,isbn,opinion,puntuacion,estado);
+		return resenna;
+		
+	}
+	//Borrar reseña
+	private static Resennas borrarRese(ArrayList<Resennas>lista) {
+
+		Scanner sc = new Scanner(System.in);
+		
+		Resennas resenna = null;
+		if(lista.isEmpty()) {
+			System.out.println("No se encontró ninguna editorial");
+		}
+		else {
+			if(lista.size()==1) {
+				resenna = lista.get(0);
+			}
+			else {
+				System.out.println("Se encontraron varias editoriales");
+				System.out.println(lista.toString());
+				int eleccion;
+				do {
+					System.out.println("Selecciona la editorial entre 1 y "+lista.size());
+					eleccion = sc.nextInt();
+					if(eleccion<1 || eleccion>lista.size()) {
+						System.out.println("elección incorrecta");
+					}
+					else {
+						resenna = lista.get(eleccion - 1);
+					}
+				}
+				while(eleccion<1 || eleccion>lista.size());
+			}
+		}
+		return resenna;
+		
+	}
+	//Menu para seguir y dejar de seguir
+	private static int MenuFollow() {
+		
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Reseñas");
+		System.out.println("==============");
+		System.out.println("1.Seguir cuenta");
+		System.out.println("2.Dejar de seguir cuenta");
+		System.out.println("3.Informacion de la cuenta");
+		System.out.println("4.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	//conseguir el id de la cuenta
+	private static int idfollow() {
+		CuentasDAO bd = new CuentasDAO();
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el username");
+		String username = sc.nextLine();
+		int id = bd.obtenerId(username);
+		return id;
+	}
+	private static CuentaSigueCuenta seguir(int idSeguidor) {
+		int idfollow = idfollow();
+		CuentaSigueCuenta follow = new CuentaSigueCuenta(idfollow,idSeguidor);
+		return follow;
+	}
+
+	
+	
 }	
+
+
 	
 

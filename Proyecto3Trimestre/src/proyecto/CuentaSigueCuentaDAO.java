@@ -3,6 +3,7 @@ package proyecto;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CuentaSigueCuentaDAO {
@@ -47,7 +48,7 @@ public class CuentaSigueCuentaDAO {
 
 
             } catch (SQLException ex) {
-                System.out.println("Error al insertar me gusta en la base de datos: ");
+                System.out.println("Error al insertar seguir en la base de datos: ");
                
             }
         } 
@@ -64,5 +65,32 @@ public class CuentaSigueCuentaDAO {
     	catch(SQLException ex) {
     		System.out.println("Error al dejar de seguir");
     	}
+    }
+    public void contarSeguidosSeguidores(int idCuenta) {
+        String sql = "SELECT COUNT(*) AS seguidos FROM CuentaSigueCuenta WHERE idSeguidor = ?";
+        String sql2 = "SELECT COUNT(*) AS seguidores FROM CuentaSigueCuenta WHERE idSeguido = ?";
+
+        try {
+            // Contar seguidos
+            PreparedStatement sentencia = conexion.prepareStatement(sql);
+            sentencia.setInt(1, idCuenta);
+            ResultSet rs = sentencia.executeQuery();
+            if (rs.next()) {
+                int seguidos = rs.getInt("seguidos");
+                System.out.println("Cantidad de seguidos: " + seguidos);
+            }
+
+            // Contar seguidores
+            PreparedStatement sentencia2 = conexion.prepareStatement(sql2);
+            sentencia2.setInt(1, idCuenta);
+            ResultSet rs2 = sentencia2.executeQuery();
+            if (rs2.next()) {
+                int seguidores = rs2.getInt("seguidores");
+                System.out.println("Cantidad de seguidores: " + seguidores);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Error al contar seguidos y seguidores: ");
+        }
     }
 }

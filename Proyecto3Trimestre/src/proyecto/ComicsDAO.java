@@ -96,6 +96,35 @@ public class ComicsDAO {
     		}
     		return lista;
     }
+    //Busca publicacion por titulo
+    public ArrayList<Publicaciones> readPorTitulo(String titulo,ArrayList<Publicaciones>lista) {
+    	
+    	Comics comic = null;
+    	String sql =  "SELECT Publicaciones.*, Comics.color FROM Publicaciones INNER JOIN Comics ON Publicaciones.isbn = Comics.pkfkPublicacion WHERE Publicaciones.titulo LIKE ?";
+    	
+    	try {
+    			PreparedStatement sentencia = conexion.prepareStatement(sql);
+    			sentencia.setString(1, titulo+"%");
+    			ResultSet rs = sentencia.executeQuery();
+    			while (rs.next()) {
+    				
+    					String isbn = rs.getString("isbn");
+    					String tituloN = rs.getString("titulo");
+    					String fecha_de_lanzamiento = rs.getString("fecha_de_lanzamiento");
+    					boolean estado = rs.getBoolean("estado");
+    					String fkAutorNombre = rs.getString("fkAutorNombre");
+    					String fkAutorApellidos = rs.getString("fkAutorApellidos");
+    					String fkEditorial = rs.getString("fkEditorial");
+    					boolean color = rs.getBoolean("color");
+    					
+    					comic = new Comics(isbn,tituloN,fecha_de_lanzamiento,estado,fkAutorNombre,fkAutorApellidos,fkEditorial,color);
+    					lista.add(comic);
+    				}
+    		} catch (SQLException ex) {
+    			System.out.println("Error al consultar el comic");
+    		}
+    		return lista;
+    }
     
     //Modificar comic
     public void update(Comics comic) {
@@ -135,6 +164,13 @@ public class ComicsDAO {
     		System.out.println("Error al eliminar el comic");
     	}
     }
+    
+
+    
+
+    
+    
+    
     
     
     

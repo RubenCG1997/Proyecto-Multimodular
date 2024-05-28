@@ -128,5 +128,20 @@ public class CuentasDAO {
     	return existe;
     	 	
     }
-    
+    //Obtener el id de la cuenta
+    public int obtenerId(String username) {
+    	int id = 0;
+    	String sql = "SELECT idCuenta FROM Cuentas WHERE username=?";
+    	try {
+    		PreparedStatement sentencia = conexion.prepareStatement(sql);
+    		sentencia.setString(1,username);
+    		ResultSet rs = sentencia.executeQuery(); 
+    		if(rs.next()) {
+    			id =rs.getInt("idCuenta");
+    		}
+    	}catch(SQLException ex){
+    		System.out.println("Error al buscar el username");
+    	}
+    	return id;
+    }
 }

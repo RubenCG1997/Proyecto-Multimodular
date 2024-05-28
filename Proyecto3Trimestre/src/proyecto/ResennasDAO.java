@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ResennasDAO {
 	
@@ -24,7 +25,6 @@ public class ResennasDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -49,27 +49,24 @@ public class ResennasDAO {
                 sentencia.setBoolean(5, resenna.isEstado());
                 sentencia.executeUpdate();
 
-                
-
             } catch (SQLException ex) {
-                System.out.println("Error al insertar la resenna en la base de datos: ");
+                System.out.println("Error al insertar la resenna en la base de dato porque no exista el titulo o ya la hayas realizado: ");
                
             }
         } 
     }
     
     //Muestra información de la resenna
-    public Resennas read(int pkfkCuenta,String pkfkPublicacion) {
-
+    public ArrayList<Resennas> read(int pkfkCuenta) {
+    	ArrayList<Resennas>lista= new ArrayList<>();
     	Resennas resenna = null;
-    	String sql = "SELECT *from Resennas WHERE pkfkCuenta=? AND pkfkPublicacion=?";
+    	String sql = "SELECT *from Resennas WHERE pkfkCuenta=?";
     	
     	try {
     			PreparedStatement sentencia = conexion.prepareStatement(sql);
     			sentencia.setInt(1, pkfkCuenta);
-    			sentencia.setString(2,pkfkPublicacion);
     			ResultSet rs = sentencia.executeQuery();
-    			if (rs.next()) {
+    			while (rs.next()) {
     					
     					int numCuenta = rs.getInt("pkfkCuenta");
     					String isbn = rs.getString("pkfkPublicacion");
@@ -78,12 +75,12 @@ public class ResennasDAO {
     					boolean estado = rs.getBoolean("estado");
 
     					 resenna = new Resennas(numCuenta,isbn,opinion,puntuacion,estado);
-    					
+    					 lista.add(resenna);
     				}
     		} catch (SQLException ex) {
     			System.out.println("Error al consultar la resenna");
     		}
-    		return resenna;
+    		return lista;
     }
     
     //Modifica resenna de la tabla resenna
