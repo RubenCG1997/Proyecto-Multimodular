@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AutoresDAO {
 	
@@ -25,7 +26,6 @@ public class AutoresDAO {
 
 	        try {
 	            con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-	            System.out.println("Conexión exitosa a la base de datos");
 	        } catch (SQLException ex) {
 	            System.out.println("Error al conectar a la base de datos");
 	           
@@ -50,35 +50,38 @@ public class AutoresDAO {
 	                sentencia.executeUpdate();
 	               
 	            } catch (SQLException ex) {
-	                System.out.println("Error al insertar el/la autor/a en la base de datos");
+	                System.out.println("Ese autor ya existe en la base de datos");
 	                
 	            }
 	        } 
 	    }
 	    
 	    //Muesta la información del autor
-	    public Autores read(String nombre, String apellidos) {
-
+	    public ArrayList<Autores> read(String nombre, String apellidos) {
+	    	
+	    	ArrayList<Autores>lista = new ArrayList<>();
 	    	Autores autor = null;
-	    	String sql = "SELECT * FROM Autores WHERE nombre=? AND apellidos=?";
+	    	String sql = "SELECT * FROM Autores WHERE nombre Like ? AND apellidos Like ?";
 	    	
 	    	try {
 	    			PreparedStatement sentencia = conexion.prepareStatement(sql);
-	    			sentencia.setString(1, nombre);
-	    			sentencia.setString(2, apellidos);
+	    			sentencia.setString(1,nombre+"%" );
+	    			sentencia.setString(2,apellidos+"%");
 	    			ResultSet rs = sentencia.executeQuery();
-	    			if (rs.next()) {
-	    				
+	    			while (rs.next()) {
+	    					String nombreAutor = rs.getString("nombre");
+	    					String apellidosAutor = rs.getString("apellidos");
 	    					String fecha_de_nacimineto = rs.getString("fecha_de_nacimiento");
 	    					String biografia = rs.getString("biografía");
 	    					boolean estado = rs.getBoolean("estado");
 	    				
-	    					autor = new Autores(nombre,apellidos,fecha_de_nacimineto,biografia,estado);
+	    					autor = new Autores(nombreAutor,apellidosAutor,fecha_de_nacimineto,biografia,estado);
+	    					lista.add(autor);
 	    				}
 	    		} catch (SQLException ex) {
-	    			System.out.println("Error al consultar el/la autor/a");
+	    			System.out.println("Error al buscar autor/autores");
 	    		}
-	    		return autor;
+	    		return lista;
 	    	}
 	    
 	    public void update(Autores autor) {
@@ -87,6 +90,7 @@ public class AutoresDAO {
 	    				+ " WHERE nombre=? AND apellidos=?";
 	    		try {
 	        		PreparedStatement sentencia = conexion.prepareStatement(sql);
+	        		
 	        		sentencia.setString(1, autor.getBiografia());
 	        		sentencia.setBoolean(2, autor.isEstado());
 	        		sentencia.setString(3, autor.getNombre());

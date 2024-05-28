@@ -1,5 +1,6 @@
 package proyecto;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import proyecto.Suscripciones.CUOTA;
@@ -48,7 +49,44 @@ public class APP {
 							do {
 								elecMenuAdmin = MenuAdministrador();
 								switch(elecMenuAdmin) {
-								case 1:break;
+								case 1:
+									int elecMenuAutor;
+									do {
+										AutoresDAO bdAutor = new AutoresDAO();
+										elecMenuAutor = MenuCrudAutores();
+										switch(elecMenuAutor) {
+										case 1:
+											  Autores autor = crearAutor();
+											  bdAutor.create(autor); 
+										break;
+										case 2:
+											  ArrayList<Autores>lista = new ArrayList<>();
+											  lista = bdAutor.read(buscadorNombre(), buscadorApellidos());
+											  if(!lista.isEmpty()) {
+												 System.out.println(lista.toString()); 
+											  }
+										break;
+										case 3:
+											  autor = elecAutor(bdAutor.read(buscadorNombre(), buscadorApellidos()));
+											  if(autor != null) {
+													 System.out.println(autor.toString()); 
+													 bdAutor.update(modiAutor(autor));
+												 }
+										break;
+										case 4:
+											  autor = elecAutor(bdAutor.read(buscadorNombre(), buscadorApellidos()));
+											  if(autor!=null) {
+												  System.out.println("Eliminando Autor ");
+												  System.out.println(autor.toString());
+												  bdAutor.delete(autor.getNombre(), autor.getApellidos());
+											  }
+										break;
+										case 5:System.out.println("Volviendo al menú de administrador");break;
+										default:System.out.println("Opción incorrecta");
+										}
+									}
+									while(elecMenuAutor!=5);
+								break;
 								case 2:break;
 								case 3:break;
 								case 4:break;
@@ -85,7 +123,7 @@ public class APP {
 		
 	
 	}
-	
+	//Menu principal
 	private static int MenuPrincipal() {
 		
 	    var sc = new Scanner(System.in);
@@ -102,7 +140,7 @@ public class APP {
 	            
 	            return eleccion;
 	}
-	
+	//Menu de usuario
 	private static int MenuUsuario() {
 	
 		int eleccion;
@@ -120,7 +158,7 @@ public class APP {
         
         return eleccion;
 	}
-	
+	//Menu de administrador
 	private static int MenuAdministrador() {
 		
 		int eleccion;
@@ -138,10 +176,9 @@ public class APP {
         eleccion = sc.nextInt();
         
         return eleccion;
-	}
-	
+	}	
 	//Crea usuario
-	public static Usuarios crearUsuario() {
+	private static Usuarios crearUsuario() {
 		
 		Scanner sc = new Scanner(System.in);
 		
@@ -181,7 +218,7 @@ public class APP {
 		
 	}
 	//Crea cuenta
-	public static Cuentas crearCuentas(String dni) {
+	private static Cuentas crearCuentas(String dni) {
 		
 		SuscripcionesDAO bd = new SuscripcionesDAO();
 		CuentasDAO bdCuenta = new CuentasDAO();
@@ -256,8 +293,7 @@ public class APP {
 		while(!elecTipo.equals("INDIVIDUAL")&& !elecTipo.equals("DUO") && !elecTipo.equals("FAMILIAR"));
 		
 		return tipo;
-	}
-	
+	}	
 	//Elegir una cuota de suscripción
 	private static CUOTA cuota(){
 
@@ -277,7 +313,6 @@ public class APP {
 		
 		return cuota;
 	}
-	
 	//Introduce email y contrasenna y devuelve el usuario
 	public static Usuarios introduceDatos() {
 		UsuariosDAO bd = new UsuariosDAO();
@@ -289,8 +324,112 @@ public class APP {
 		Usuarios usuario = bd.inicioSesion(email, contraseña);
 		return usuario;
 	}
-	
+	//Menú CRUD de Autores
+	private static int MenuCrudAutores() {
+		
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Crud Autor");
+		System.out.println("==============");
+		System.out.println("1.Añadir autor");
+		System.out.println("2.Mostrar información del autor");
+		System.out.println("3.Modificar información del autor");
+		System.out.println("4.Eliminar Autor");
+		System.out.println("5.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	//crea Autor
+	private static Autores crearAutor() {
+		
+		final boolean estado = true; //Un autor siempre que se cree esta visible en la base de datos
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el  nombre");
+		String nombre = sc.nextLine().toLowerCase();
+		System.out.println("Introduce el/los apellidos");
+		String apellidos = sc.nextLine().toLowerCase();
+		System.out.println("Introduce tu fecha de nacimiento siguiendo el siguiente formato: (aaaa-mm-dd)");
+		String fNac = sc.nextLine();
+		System.out.println("Introduce una biografía");
+		String biografia = sc.nextLine().toLowerCase();
+		
+		Autores autor = new Autores(nombre,apellidos,fNac,biografia,estado);
+		return autor;
+	}
+	//Buscador de nombre
+	private static String buscadorNombre() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Buscador de autores");
+		System.out.println("Introduce el nombre del autor");
+		String nombre = sc.nextLine();
+		return nombre;
+	}
+	//Buscador de apellidos
+	private static String buscadorApellidos() {
 
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el/los apellidos del autor");
+		String apellidos = sc.nextLine();
+		return apellidos;
+	}
+	//Selecciona Autor de una lista
+	private static Autores elecAutor(ArrayList<Autores>lista) {
+		Scanner sc = new Scanner(System.in);
+		
+		Autores autor = null;
+		if(lista.isEmpty()) {
+			System.out.println("No se encontró ningún autor");
+		}
+		else {
+			if(lista.size()==1) {
+				autor = lista.get(0);
+			}
+			else {
+				System.out.println("Se encontraron varios autores");
+				System.out.println(lista.toString());
+				int eleccion;
+				do {
+					System.out.println("Selecciona el autor entre 1 y "+lista.size());
+					eleccion = sc.nextInt();
+					if(eleccion<1 || eleccion>lista.size()) {
+						System.out.println("elección incorrecta");
+					}
+					else {
+						autor = lista.get(eleccion - 1);
+					}
+				}
+				while(eleccion<1 || eleccion>lista.size());
+			}
+		}
+		return autor;
+		
+	}
+	//Modificar información de los autores
+	private static Autores modiAutor(Autores autor) {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		String biografia;
+		boolean estado;	
+		System.out.println("Modifica la biografía, si no pulsa enter");
+		biografia=sc.nextLine();
+		System.out.println("Modifica el estado, true o false");
+		estado = sc.nextBoolean();
+
+		if(biografia.isEmpty()) {
+			biografia = autor.getBiografia();
+		}
+		  
+	        autor.setBiografia(biografia);
+	        autor.setEstado(estado);
+		System.out.println(autor.toString());
+		
+		return autor;	
+	}
+	
 }
 	
 	
