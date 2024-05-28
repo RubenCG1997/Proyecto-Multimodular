@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ListasDAO {
 
@@ -24,7 +25,6 @@ public class ListasDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -50,36 +50,35 @@ public class ListasDAO {
                 
 
             } catch (SQLException ex) {
-                System.out.println("Error al insertar el comic en la base de datos: ");
+                System.out.println("Error al insertar la lista en la base de datos: ");
                
             }
         } 
     }
     
     //Muestra información de la Lista
-    public Listas read(String nombre,int pkfkCuenta) {
-
+    public ArrayList<Listas> read(int pkfkCuenta) {
+    	ArrayList<Listas>conjuntoListas = new ArrayList<>();
     	Listas lista = null;
-    	String sql = "SELECT *from Listas WHERE nombre=? AND pkfkCuenta=?";
+    	String sql = "SELECT *from Listas WHERE pkfkCuenta=?";
     	
     	try {
     			PreparedStatement sentencia = conexion.prepareStatement(sql);
-    			sentencia.setString(1, nombre);
-    			sentencia.setInt(2,pkfkCuenta);
+    			sentencia.setInt(1,pkfkCuenta);
     			ResultSet rs = sentencia.executeQuery();
-    			if (rs.next()) {
+    			while (rs.next()) {
     				
     					String nombreLista = rs.getString("nombre");
     					int idCuenta = rs.getInt("pkfkCuenta");
     					boolean estado = rs.getBoolean("estado");
 
     					lista = new Listas(nombreLista,idCuenta,estado);
-    					
+    					conjuntoListas.add(lista);
     				}
     		} catch (SQLException ex) {
     			System.out.println("Error al consultar la lista");
     		}
-    		return lista;
+    		return conjuntoListas;
     }
     
     //Modificar Lista

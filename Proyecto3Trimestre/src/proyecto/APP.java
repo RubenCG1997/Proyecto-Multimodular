@@ -242,6 +242,9 @@ public class APP {
 							ComicsDAO bdComic = new ComicsDAO();
 							EbooksDAO bdEbook = new EbooksDAO();
 							CuentaSigueCuentaDAO bdFollow = new CuentaSigueCuentaDAO();
+							ListasDAO bdLista = new ListasDAO();
+							ListaContienePublicacionesDAO bdLCP = new ListaContienePublicacionesDAO();
+							MeGustaDAO bcMg = new MeGustaDAO();
 							Cuentas cuenta=obtenerCuenta(usuarioConectado.getDni());
 							do {
 								elecMenuUsu = MenuUsuario();
@@ -295,10 +298,10 @@ public class APP {
 										elecFollow = MenuFollow();
 										switch(elecFollow) {
 										case 1:
-											bdFollow.create(seguir(bdCuen.obtenerId(cuenta.getUsername())));
+											bdFollow.create(TratoFollow(bdCuen.obtenerId(cuenta.getUsername())));
 										break;
 										case 2:
-											bdFollow.delete(seguir(bdCuen.obtenerId(cuenta.getUsername())).getIdSeguido(),bdCuen.obtenerId(cuenta.getUsername()));
+											bdFollow.delete(TratoFollow(bdCuen.obtenerId(cuenta.getUsername())).getIdSeguido(),bdCuen.obtenerId(cuenta.getUsername()));
 										break;
 										case 3:
 											bdFollow.contarSeguidosSeguidores(bdCuen.obtenerId(cuenta.getUsername()));
@@ -310,8 +313,61 @@ public class APP {
 									while(elecFollow!=4);
 								break;
 								case 3:
+									int elecListas;
+									do {
+										elecListas = MenuListas();
+										switch(elecListas) {
+										case 1:
+											bdLista.create(TratoLista(bdCuen.obtenerId(cuenta.getUsername())));
+										break;
+										case 2:
+											ArrayList<Listas>lista=new ArrayList<>();
+											lista = bdLista.read(bdCuen.obtenerId(cuenta.getUsername()));
+											if(!lista.isEmpty()) {
+												System.out.println(lista.toString());
+											}
+											else {
+												System.out.println("No tienes listas");
+											}
+										break;
+										case 3:
+											bdLista.delete(TratoLista(bdCuen.obtenerId(cuenta.getUsername())).getNombre(),bdCuen.obtenerId(cuenta.getUsername()));
+										break;
+										case 4:
+											  ArrayList<Publicaciones>listaADD= new ArrayList<>();
+											  String titulo = buscaTitulo();
+											  listaADD = bdComic.readPorTitulo(titulo,listaADD);
+											  listaADD = bdEbook.readPorTitulo(titulo,listaADD);
+											  Publicaciones publicacionSeleccionada = elecPublicaciones(listaADD);
+											  if(publicacionSeleccionada!=null) {
+												  bdLCP.create(tratoLCP(bdCuen.obtenerId(cuenta.getUsername()),publicacionSeleccionada.getIsbn()));  
+											  }
+										break;
+										case 5:
+											 ArrayList<Publicaciones>listaBorr= new ArrayList<>();
+											 String tituloBor= buscaTitulo();
+											 listaBorr = bdComic.readPorTitulo(tituloBor,listaBorr);
+											 listaBorr = bdEbook.readPorTitulo(tituloBor,listaBorr);
+											  Publicaciones publicacionSeleccionadaBorr = elecPublicaciones(listaBorr);
+											  if(publicacionSeleccionadaBorr!=null) {
+												  ListaContienePublicaciones lcp = tratoLCP(bdCuen.obtenerId(cuenta.getUsername()),publicacionSeleccionadaBorr.getIsbn());
+												  bdLCP.delete(publicacionSeleccionadaBorr.getIsbn(),lcp.getPkfkNombreLista(),lcp.getPkfkCuentaLista());  
+											  }
+										break;
+										case 6:
+											bcMg.create(TratoMg(bdCuen.obtenerId(cuenta.getUsername())));
+										break;
+										case 7:
+											MeGusta mg = TratoMg(bdCuen.obtenerId(cuenta.getUsername()));
+											bcMg.delete(bdCuen.obtenerId(cuenta.getUsername()), mg.getPkfkNombreLista(), mg.getPkfkCuentaLista());
+										break;
+										case 8:System.out.println("Volviendo al menú del usuario");break;
+										default:System.out.println("Opción incorrecta");break;
+										}
+									}
+									while(elecListas!=9);
 								break;
-								case 4: break;
+								case 4: bd.update(modificar(usuarioConectado)); break;
 								case 5: System.out.println("Cerrando sesión");break;
 								default:System.out.println("Opción incorrecta");break;
 								}
@@ -1067,7 +1123,7 @@ public class APP {
 		
 		int eleccion;
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Menu Reseñas");
+		System.out.println("Menu Follow");
 		System.out.println("==============");
 		System.out.println("1.Seguir cuenta");
 		System.out.println("2.Dejar de seguir cuenta");
@@ -1080,7 +1136,7 @@ public class APP {
         return eleccion;
 	}
 	//conseguir el id de la cuenta
-	private static int idfollow() {
+	private static int idOtraCuenta() {
 		CuentasDAO bd = new CuentasDAO();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Introduce el username");
@@ -1088,13 +1144,65 @@ public class APP {
 		int id = bd.obtenerId(username);
 		return id;
 	}
-	private static CuentaSigueCuenta seguir(int idSeguidor) {
-		int idfollow = idfollow();
+	private static CuentaSigueCuenta TratoFollow(int idSeguidor) {
+		int idfollow = idOtraCuenta();
 		CuentaSigueCuenta follow = new CuentaSigueCuenta(idfollow,idSeguidor);
 		return follow;
 	}
 
+	//Menu para manipulacion de listas
+	private static int MenuListas() {
+		
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Listas");
+		System.out.println("==============");
+		System.out.println("1.Crear lista");
+		System.out.println("2.Mostrar listas");
+		System.out.println("3.Borrar lista");
+		System.out.println("4.Añadir libro a lista");
+		System.out.println("5.Eliminar libro de lista");
+		System.out.println("6.Dar me gusta a lista");
+		System.out.println("7.Quitar me gusta a lista");
+		System.out.println("8.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
 	
+	//Crear listas
+	private static Listas TratoLista (int idCuenta) {
+		Scanner sc = new Scanner(System.in);
+		final boolean estado = true;
+		System.out.println("Introduce el nombre de la lista ");
+		String nombre = sc.nextLine().toLowerCase().trim();
+		Listas lista = new Listas (nombre,idCuenta,estado);
+		return lista;
+		
+	}
+	
+	//Trata libros en listas
+	private static ListaContienePublicaciones tratoLCP(int idCuenta,String isbn) {
+		ListaContienePublicaciones lcp;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el nombre de la lista ");
+		String nombre = sc.nextLine().toLowerCase().trim();
+		lcp = new ListaContienePublicaciones(isbn,nombre,idCuenta);
+		return lcp;
+	}
+	
+	private static MeGusta TratoMg(int idCuenta) {
+
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el nombre de la lista ");
+		String nombre = sc.nextLine().toLowerCase().trim();
+		int idotro=idOtraCuenta();
+		MeGusta mg;
+		mg = new MeGusta(idCuenta,nombre,idotro);
+		return mg;
+	}
 	
 }	
 

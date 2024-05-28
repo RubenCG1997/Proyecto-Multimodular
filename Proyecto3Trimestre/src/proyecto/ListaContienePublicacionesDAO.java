@@ -24,7 +24,6 @@ public class ListaContienePublicacionesDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -49,7 +48,7 @@ public class ListaContienePublicacionesDAO {
 
 
             } catch (SQLException ex) {
-                System.out.println("Error al insertar la resenna en la base de datos: ");
+                System.out.println("Error al insertar el libro en la lista ");
                
             }
         } 

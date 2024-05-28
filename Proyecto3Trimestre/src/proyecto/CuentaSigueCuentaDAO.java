@@ -24,7 +24,6 @@ public class CuentaSigueCuentaDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
