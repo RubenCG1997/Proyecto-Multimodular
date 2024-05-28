@@ -1,5 +1,6 @@
 package proyecto;
 
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -51,12 +52,13 @@ public class APP {
 								switch(elecMenuAdmin) {
 								case 1:
 									int elecMenuAutor;
+									 Autores autor;
 									do {
 										AutoresDAO bdAutor = new AutoresDAO();
 										elecMenuAutor = MenuCrudAutores();
 										switch(elecMenuAutor) {
 										case 1:
-											  Autores autor = crearAutor();
+											  autor = crearAutor();
 											  bdAutor.create(autor); 
 										break;
 										case 2:
@@ -126,7 +128,76 @@ public class APP {
 									}
 									while(elecMenuEdi!=5);
 								break;
-								case 3:break;
+								case 3:
+									int elecMenuPubli;
+									ComicsDAO bdComic = new ComicsDAO();
+									EbooksDAO bdEbook = new EbooksDAO();
+									do {
+										
+										elecMenuPubli = MenuCrudPublicaciones();
+										Publicaciones publicacion;
+										switch(elecMenuPubli) {
+										case 1:
+											publicacion = creaPublicacion();
+											if(publicacion instanceof Comics) {
+												bdComic.create((Comics) publicacion);
+											}
+											else {
+												bdEbook.create((Ebooks) publicacion);
+										}
+										break;
+										case 2:
+											ArrayList<Publicaciones>lista= new ArrayList<>();
+											String isbn = buscaIsbn();
+											lista = bdComic.read(isbn,lista);
+											lista =	bdEbook.read(isbn,lista);
+											if(lista!=null) {
+												System.out.println(lista.toString());
+											}
+											else {
+												System.out.println("No se encontraron publicaciones");
+											}
+										break;
+										case 3:
+											 ArrayList<Publicaciones>listaMod= new ArrayList<>();
+											 String isbnMod = buscaIsbn();
+											 lista = bdComic.read(isbnMod,listaMod);
+											 lista = bdEbook.read(isbnMod,listaMod);
+											 Publicaciones publicacionSeleccionada = elecPublicaciones(listaMod);
+											 if(publicacionSeleccionada instanceof Comics) {
+												 Comics modificado = (Comics) modiPublicaciones(publicacionSeleccionada);
+												 bdComic.update((Comics)modificado);
+												 
+											 }
+											 else {
+												 Ebooks modificado = (Ebooks) modiPublicaciones(publicacionSeleccionada);
+												 bdEbook.update((Ebooks)modificado);
+											 }
+										break;
+										case 4:
+											 ArrayList<Publicaciones>listaBorr= new ArrayList<>();
+											 String isbnBorr = buscaIsbn();
+											 lista = bdComic.read(isbnBorr,listaBorr);
+											 lista = bdEbook.read(isbnBorr,listaBorr);
+											 Publicaciones publicacionSeleccionadaBorrar = elecPublicaciones(listaBorr);
+											 if(publicacionSeleccionadaBorrar!=null) {
+												 if(publicacionSeleccionadaBorrar instanceof Comics) {
+													 System.out.println("Comic eliminado");
+													 bdComic.delete(publicacionSeleccionadaBorrar.getIsbn()); 
+												 }
+												 else {
+													 System.out.println("Ebook eliminado");
+													 bdEbook.delete(publicacionSeleccionadaBorrar.getIsbn());
+												 }
+											 }
+											
+										break;
+										case 5:System.out.println("Volviendo al menú de administrador");break;
+										default:System.out.println("Elección incorrecta");
+										}
+									}
+									while(elecMenuPubli!=5);
+								break;
 								case 4:break;
 								case 5:break;
 								case 6:System.out.println("Cerrando sesión");break;
@@ -587,7 +658,177 @@ public class APP {
 		
 		return editorial;	
 	}
-}
-	
+	//Menú CRUD de publicaciones
+	private static int MenuCrudPublicaciones() {
+
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Crud Publicaciones");
+		System.out.println("==============");
+		System.out.println("1.Añadir Publicacion");
+		System.out.println("2.Mostrar información de la publicacion");
+		System.out.println("3.Modificar información de la publicacion");
+		System.out.println("4.Eliminar publicacion");
+		System.out.println("5.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	//crear publicacion
+	private static Publicaciones creaPublicacion() {
+		
+		
+		Scanner sc = new Scanner(System.in);
+		
+		
+		String eleccion;
+		do {
+			System.out.println("¿qué desea añadir? (comic/ebook)");
+			eleccion=sc.nextLine().toLowerCase().trim();
+			if(!eleccion.equals("comic") && !eleccion.equals("ebook")) {
+				System.out.println("Respuesta incorrecta");
+			}
+		}
+		while(!eleccion.equals("comic") && !eleccion.equals("ebook"));
+		
+		System.out.println("Introduce el isbn");
+		String isbn = sc.nextLine().toLowerCase();
+		System.out.println("Introduc el titulo");
+		String titulo = sc.nextLine().toLowerCase();
+		System.out.println("Introduce la fecha de lanzamiento siguiendo el siguiente formato (aaaa-mm-dd)");
+		String fLan = sc.nextLine();
+		System.out.println("Introduce si esta publico o no (true/false");
+		boolean estado = sc.nextBoolean();
+		sc.nextLine();
+		System.out.println("Introduce el nombre del autor");
+		String nombre = sc.nextLine().toLowerCase();
+		System.out.println("Introduce los apellidos dle autor");
+		String apellidos = sc.nextLine().toLowerCase();
+		System.out.println("Introduce el cif de la editorial");
+		String cif = sc.nextLine().toLowerCase();
+		
+		if(eleccion.equals("comic")) {
+			Comics comic ;
+			System.out.println("Introduce si tiene color (true/false)");
+			boolean color =sc.nextBoolean();
+			comic = new Comics(isbn,titulo,fLan,estado,nombre,apellidos,cif,color);
+			return comic;
+			
+		}
+		else {
+			Ebooks ebook;
+		
+			System.out.println("Introduce el formato del ebook");
+			String formato = sc.nextLine().toLowerCase();
+			ebook = new Ebooks(isbn,titulo,fLan,estado,nombre,apellidos,cif,formato);
+			return ebook;
+		}
+		
+		
+	}
+	//Buscar publicacion por isbn
+	private static String buscaIsbn() {
+
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce el isbn");
+		String isbn = sc.nextLine().toLowerCase().trim();
+		return isbn;
+	}
+	//Elegir publicacion
+	private static Publicaciones elecPublicaciones(ArrayList<Publicaciones>lista) {
+
+		Scanner sc = new Scanner(System.in);
+		
+		Publicaciones publicacion = null;
+		if(lista.isEmpty()) {
+			System.out.println("No se encontró ninguna publicacion");
+		}
+		else {
+			if(lista.size()==1) {
+				publicacion = lista.get(0);
+			}
+			else {
+				System.out.println("Se encontraron varias publicacion");
+				System.out.println(lista.toString());
+				int eleccion;
+				do {
+					System.out.println("Selecciona la publicacion entre 1 y "+lista.size());
+					eleccion = sc.nextInt();
+					if(eleccion<1 || eleccion>lista.size()) {
+						System.out.println("elección incorrecta");
+					}
+					else {
+						publicacion = lista.get(eleccion - 1);
+					}
+				}
+				while(eleccion<1 || eleccion>lista.size());
+			}
+			
+			if(publicacion instanceof Comics) {
+				Comics comic = (Comics) publicacion;
+				return comic;
+			}
+			else {
+				Ebooks ebook = (Ebooks) publicacion;
+				return ebook;
+			}
+		}
+		return publicacion;
+		
+	}
+	//Modificar publicacion
+	private static Publicaciones modiPublicaciones(Publicaciones publicacion) {
+		
+		Scanner sc = new Scanner(System.in);
+		System.out.println(publicacion.toString());
+		String titulo,nombreAutor,apellidoAutor,cif;
+		boolean estado;	
+		System.out.println("Modifica el titulo, si no pulsa enter");
+		titulo=sc.nextLine().toLowerCase();
+		System.out.println("Modifica el estado, pon true o false");
+		estado = sc.nextBoolean();
+		sc.nextLine();
+		System.out.println("Modifica el nombre del autor, si no pulsa enter");
+		nombreAutor=sc.nextLine().toLowerCase();
+		System.out.println("Modifica los apellidos del autor, si no pulsa enter");
+		apellidoAutor=sc.nextLine().toLowerCase();
+		System.out.println("Modifica el cif de la editorial,si no pulsa enter");
+		cif=sc.nextLine().toLowerCase();
+		
+		if(titulo.isEmpty()) {
+			titulo = publicacion.getTitulo();
+		}
+		if(nombreAutor.isEmpty()) {
+			nombreAutor = publicacion.getFkAutorNombre();
+		}
+		if(apellidoAutor.isEmpty()) {
+			apellidoAutor = publicacion.getFkAutorApellidos();
+		}
+		if(cif.isEmpty()) {
+			cif = publicacion.getFkEditorial();
+		}
+		
+		if(publicacion instanceof Comics) {
+			System.out.println("Modifica el color, pon true o false");
+			boolean color = sc.nextBoolean();
+			Comics comic = new Comics(publicacion.getIsbn(),titulo,publicacion.getFecha_de_lanzamiento(),estado,nombreAutor,apellidoAutor,cif, color);
+			System.out.println(comic.toString());
+			return comic;
+		}
+		else {
+			System.out.println("Modifica el formato, si no pulsa enter");
+			String formato = sc.nextLine().toLowerCase();
+			if(formato.isEmpty()) {
+				formato = ((Ebooks) publicacion).getFormato();
+			}
+			Ebooks ebook = new Ebooks(publicacion.getIsbn(),titulo,publicacion.getFecha_de_lanzamiento(),estado,nombreAutor,apellidoAutor,cif, formato);
+			System.out.println(ebook.toString());
+			return ebook;
+			
+		}
+	}
+}	
 	
 

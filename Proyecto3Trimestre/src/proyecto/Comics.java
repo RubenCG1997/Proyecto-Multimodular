@@ -1,5 +1,7 @@
 package proyecto;
 
+import java.time.LocalDate;
+
 public class Comics extends Publicaciones {
 
 	private boolean color;
@@ -15,7 +17,12 @@ public class Comics extends Publicaciones {
 		
 		this.color = color;
 	}
-
+	
+	public Comics(String isbn, String titulo, LocalDate fecha_de_lanzamiento, boolean estado, String fkAutorNombre,
+			String fkAutorApellidos, String fkEditorial, boolean color) {
+		super(isbn, titulo, fecha_de_lanzamiento, estado, fkAutorNombre, fkAutorApellidos, fkEditorial);
+		this.color = color;
+	}
 
 	public boolean isColor() {
 		return color;

@@ -1,18 +1,22 @@
 package proyecto;
 
+import java.time.LocalDate;
+
 public class Ebooks extends Publicaciones {
 
 	private String formato;
 
-	public Ebooks() {
-		super();
-		}
 
 	public Ebooks(String isbn, String titulo, String fecha_de_lanzamiento, boolean estado, String fkAutorNombre,
 			String fkAutorApellidos, String fkEditorial, String formato) {
 		
 		super(isbn, titulo, fecha_de_lanzamiento, estado, fkAutorNombre, fkAutorApellidos, fkEditorial);
 		
+		this.formato = formato;
+	}
+	public Ebooks(String isbn, String titulo, LocalDate fecha_de_lanzamiento, boolean estado, String fkAutorNombre,
+			String fkAutorApellidos, String fkEditorial, String formato) {
+		super(isbn, titulo, fecha_de_lanzamiento, estado, fkAutorNombre, fkAutorApellidos, fkEditorial);
 		this.formato = formato;
 	}
 

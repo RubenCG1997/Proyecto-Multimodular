@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ComicsDAO {
 	
@@ -25,7 +26,6 @@ public class ComicsDAO {
 
         try {
             con = DriverManager.getConnection(url, USUARIO, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos");
         } catch (SQLException ex) {
             System.out.println("Error al conectar a la base de datos");
            
@@ -68,16 +68,16 @@ public class ComicsDAO {
     }
     
     //Muestra información del comic
-    public Comics read(String pkfkPublicacion) {
+    public ArrayList<Publicaciones> read(String pkfkPublicacion,ArrayList<Publicaciones>lista) {
 
     	Comics comic = null;
-    	String sql = "SELECT Publicaciones.*, Comics.color FROM Publicaciones INNER JOIN Comics ON Publicaciones.isbn = Comics.pkfkPublicacion WHERE Comics.pkfkPublicacion=?";
+    	String sql = "SELECT Publicaciones.*, Comics.color FROM Publicaciones INNER JOIN Comics ON Publicaciones.isbn = Comics.pkfkPublicacion WHERE Comics.pkfkPublicacion Like ?";
     	
     	try {
     			PreparedStatement sentencia = conexion.prepareStatement(sql);
-    			sentencia.setString(1, pkfkPublicacion);
+    			sentencia.setString(1, pkfkPublicacion+"%");
     			ResultSet rs = sentencia.executeQuery();
-    			if (rs.next()) {
+    			while (rs.next()) {
     				
     					String isbn = rs.getString("isbn");
     					String titulo = rs.getString("titulo");
@@ -87,37 +87,37 @@ public class ComicsDAO {
     					String fkAutorApellidos = rs.getString("fkAutorApellidos");
     					String fkEditorial = rs.getString("fkEditorial");
     					boolean color = rs.getBoolean("color");
-    				
     					comic = new Comics(isbn,titulo,fecha_de_lanzamiento,estado,fkAutorNombre,fkAutorApellidos,fkEditorial,color);
+    					lista.add(comic);
     					
     				}
     		} catch (SQLException ex) {
     			System.out.println("Error al consultar el comic");
     		}
-    		return comic;
+    		return lista;
     }
     
     //Modificar comic
     public void update(Comics comic) {
     	if(comic != null) {
     	    String sql = "UPDATE Publicaciones INNER JOIN Comics ON Publicaciones.isbn = Comics.pkfkPublicacion"
-    	            + " SET Publicaciones.titulo=?, Publicaciones.fecha_de_lanzamiento=?, Publicaciones.estado=?, Publicaciones.fkAutorNombre=?, Publicaciones.fkAutorApellidos=?,"
+    	            + " SET Publicaciones.titulo=?, Publicaciones.estado=?, Publicaciones.fkAutorNombre=?, Publicaciones.fkAutorApellidos=?,"
     	            + " Publicaciones.fkEditorial=?, Comics.color=?"
     	            + " WHERE Comics.pkfkPublicacion=?";
     		try {
         		PreparedStatement sentencia = conexion.prepareStatement(sql);
         		sentencia.setString(1, comic.getTitulo());
-        		sentencia.setDate(2, Date.valueOf(comic.getFecha_de_lanzamiento()));
-        		sentencia.setBoolean(3, comic.isEstado());
-        		sentencia.setString(4, comic.getFkAutorNombre());
-        		sentencia.setString(5, comic.getFkAutorApellidos());
-        		sentencia.setString(6, comic.getFkEditorial());
-        		sentencia.setBoolean(7, comic.isColor());
-        		sentencia.setString(8, comic.getIsbn());
+        		//sentencia.setDate(2, Date.valueOf(comic.getFecha_de_lanzamiento()));
+        		sentencia.setBoolean(2, comic.isEstado());
+        		sentencia.setString(3, comic.getFkAutorNombre());
+        		sentencia.setString(4, comic.getFkAutorApellidos());
+        		sentencia.setString(5, comic.getFkEditorial());
+        		sentencia.setBoolean(6, comic.isColor());
+        		sentencia.setString(7, comic.getIsbn());
         		sentencia.executeUpdate();
         	}
     		catch(SQLException ex) {
-    			System.out.println("El comic que se quiere modificar no existe");
+    			System.out.println("El comic no se puede modificar");
     		}
     	}
     	

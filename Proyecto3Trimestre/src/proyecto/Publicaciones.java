@@ -30,6 +30,21 @@ public abstract class Publicaciones {
 		this.fkAutorApellidos = fkAutorApellidos;
 		this.fkEditorial = fkEditorial;
 	}
+	
+	
+
+	
+	public Publicaciones(String isbn, String titulo, LocalDate fecha_de_lanzamiento, boolean estado,
+			String fkAutorNombre, String fkAutorApellidos, String fkEditorial) {
+		super();
+		this.isbn = isbn;
+		this.titulo = titulo;
+		this.fecha_de_lanzamiento = fecha_de_lanzamiento;
+		this.estado = estado;
+		this.fkAutorNombre = fkAutorNombre;
+		this.fkAutorApellidos = fkAutorApellidos;
+		this.fkEditorial = fkEditorial;
+	}
 
 	public Publicaciones(String isbn) {
 		this.isbn= isbn;
