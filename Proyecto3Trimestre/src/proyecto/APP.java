@@ -87,7 +87,45 @@ public class APP {
 									}
 									while(elecMenuAutor!=5);
 								break;
-								case 2:break;
+								case 2:
+									int elecMenuEdi;
+									Editoriales editorial;
+									do {
+										EditorialesDAO bdEditorial = new EditorialesDAO();
+										elecMenuEdi = MenuCrudEditoriales();
+										switch(elecMenuEdi) {
+										case 1:
+											  editorial = creaEditorial();
+											  bdEditorial.create(editorial);
+										break;
+										case 2:
+											  ArrayList<Editoriales>lista = new ArrayList<>();
+											  lista = bdEditorial.read(buscadorCif());
+											  if(!lista.isEmpty()) {
+												 System.out.println(lista.toString()); 
+											  }
+										break;
+										case 3:
+											 editorial = elecEditorial(bdEditorial.read(buscadorCif()));
+											 if(editorial!=null) {
+												 System.out.println(editorial.toString());
+												 bdEditorial.update(modiEditorial(editorial));
+											 } 
+										break;
+										case 4:
+											 editorial = elecEditorial(bdEditorial.read(buscadorCif()));
+											 if(editorial!=null) {
+												 System.out.println("Eliminando editorial");
+												 System.out.println(editorial.toString());
+												 bdEditorial.delete(editorial.getCif());
+											 }
+										break;
+										case 5:System.out.println("Volviendo al menú de administrador");break;
+										default:System.out.println("Elección incorrecta");
+										}
+									}
+									while(elecMenuEdi!=5);
+								break;
 								case 3:break;
 								case 4:break;
 								case 5:break;
@@ -123,6 +161,7 @@ public class APP {
 		
 	
 	}
+
 	//Menu principal
 	private static int MenuPrincipal() {
 		
@@ -314,7 +353,7 @@ public class APP {
 		return cuota;
 	}
 	//Introduce email y contrasenna y devuelve el usuario
-	public static Usuarios introduceDatos() {
+	private static Usuarios introduceDatos() {
 		UsuariosDAO bd = new UsuariosDAO();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Introduce tu correo electrónico");
@@ -429,7 +468,125 @@ public class APP {
 		
 		return autor;	
 	}
-	
+	//Menú CRUD de Editoriales
+	private static int MenuCrudEditoriales() {
+		int eleccion;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Menu Crud Editoriales");
+		System.out.println("==============");
+		System.out.println("1.Añadir editorial");
+		System.out.println("2.Mostrar información de la editorial");
+		System.out.println("3.Modificar información de la editorial");
+		System.out.println("4.Eliminar editorial");
+		System.out.println("5.Salir");
+		System.out.println("==============");
+		System.out.println("Introduce una opción: ");
+        eleccion = sc.nextInt();
+        
+        return eleccion;
+	}
+	//Crea Editorial
+	private static Editoriales creaEditorial() {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		final boolean estado = true; //Una editorial siempre que se cree esta visible en la base de datos
+		System.out.println("Introduce el cif");
+		String cif = sc.nextLine().toLowerCase();
+		System.out.println("Introduce el nombre");
+		String nombre =sc.nextLine().toLowerCase();
+		System.out.println("Introduce la direccion");
+		String direccion = sc.nextLine().toLowerCase();
+		System.out.println("Introduce el teléfono");
+		String telefono = sc.nextLine().toLowerCase();
+		System.out.println("Introduce el código postal");
+		String cp = sc.nextLine().toLowerCase();
+		
+		Editoriales editorial = new Editoriales(cif,nombre,direccion,telefono,cp,estado);
+		return editorial;
+	}
+	//Buscador de cif
+	private static String buscadorCif() {
+		Scanner sc = new Scanner(System.in);{
+			System.out.println("Introduce el cif");
+			String cif = sc.nextLine().toLowerCase();
+			return cif;
+		}
+	}
+	//Selecciona editorial de una lista
+	private static Editoriales elecEditorial(ArrayList<Editoriales>lista) {
+
+		Scanner sc = new Scanner(System.in);
+		
+		Editoriales editorial = null;
+		if(lista.isEmpty()) {
+			System.out.println("No se encontró ninguna editorial");
+		}
+		else {
+			if(lista.size()==1) {
+				editorial = lista.get(0);
+			}
+			else {
+				System.out.println("Se encontraron varias editoriales");
+				System.out.println(lista.toString());
+				int eleccion;
+				do {
+					System.out.println("Selecciona la editorial entre 1 y "+lista.size());
+					eleccion = sc.nextInt();
+					if(eleccion<1 || eleccion>lista.size()) {
+						System.out.println("elección incorrecta");
+					}
+					else {
+						editorial = lista.get(eleccion - 1);
+					}
+				}
+				while(eleccion<1 || eleccion>lista.size());
+			}
+		}
+		return editorial;
+		
+	}
+	//Modificar información de una editorial
+	private static Editoriales modiEditorial(Editoriales editorial) {
+		
+		Scanner sc = new Scanner(System.in);
+		
+		String nombre,direccion,telefono,cp;
+		boolean estado;	
+		System.out.println("Modifica el nombre, si no pulsa enter");
+		nombre=sc.nextLine().toLowerCase();
+		System.out.println("Modifica la direccion, si no pulsa enter");
+		direccion=sc.nextLine().toLowerCase();
+		System.out.println("Modifica el telefono,si no pulsa enter");
+		telefono=sc.nextLine().toLowerCase();
+		System.out.println("Modifica el cp, si no pulsa enter");
+		cp=sc.nextLine().toLowerCase();
+		System.out.println("Modifica el estado, pon true o false");
+		estado = sc.nextBoolean();
+
+		if(nombre.isEmpty()) {
+			nombre = editorial.getNombre();
+		}
+		if(direccion.isEmpty()) {
+			direccion = editorial.getDireccion();
+		}
+		if(telefono.isEmpty()) {
+			telefono = editorial.getTelefono();
+		}
+		if(cp.isEmpty()) {
+			cp = editorial.getCp();
+		}
+		
+		editorial.setNombre(nombre);
+		editorial.setDireccion(direccion);
+		editorial.setTelefono(telefono);
+		editorial.setCp(cp);
+		editorial.setEstado(estado);
+	 
+		System.out.println(editorial.toString());
+		
+		return editorial;	
+	}
 }
 	
 	
