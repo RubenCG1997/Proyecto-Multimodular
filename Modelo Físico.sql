@@ -103,7 +103,7 @@ ON UPDATE CASCADE
 -- Creacion de la tabla Listas
 
 CREATE TABLE Listas(
-nombre varchar (30),
+nombre varchar (60),
 pkfkCuenta int,
 estado boolean not null default true,
 primary key(nombre,pkfkCuenta),
@@ -117,7 +117,7 @@ ON UPDATE CASCADE
 CREATE TABLE Resennas(
 pkfkCuenta int,
 pkfkPublicacion varchar(13),
-opinion varchar(30),
+opinion varchar(100),
 puntuacion int not null check(puntuacion >= 1 And puntuacion <=5),
 estado boolean not null default true,
 primary key(pkfkCuenta,pkfkPublicacion),
@@ -170,8 +170,7 @@ ON DELETE CASCADE
 ON UPDATE CASCADE,
 foreign key (idSeguidor) REFERENCES Cuentas(idCuenta)
 ON DELETE CASCADE
-ON UPDATE CASCADE,
-CHECK (idSeguido <> idSeguidor)
+ON UPDATE CASCADE
 );
 
 -- Creación de la tabla CuentaLeePublicacion
@@ -188,15 +187,6 @@ foreign key (pkfkPublicacion) REFERENCES Publicaciones(isbn)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
-select*from cuentas;
-select*from usuarios;
-select*from autores;
-select*from editoriales;
-select*from publicaciones;
-select*from comics;
-select*from ebooks;
-select*from suscripciones;
-select*from resennas;
-select*from cuentaSigueCuenta;
-select*from listas;
-select*from ListaContienePublicaciones;
+
+select*from CuentaSigueCuenta;
+
