@@ -52,7 +52,6 @@ CREATE TABLE Cuentas(
 idCuenta int primary key auto_increment,
 username varchar(20) not null unique,
 fecha_de_creacion date not null,
-estado boolean not null default true,
 fkUsuario varchar(9) not null,
 FOREIGN KEY(fkUsuario) REFERENCES Usuarios(dni)
 ON DELETE CASCADE
@@ -171,7 +170,8 @@ ON DELETE CASCADE
 ON UPDATE CASCADE,
 foreign key (idSeguidor) REFERENCES Cuentas(idCuenta)
 ON DELETE CASCADE
-ON UPDATE CASCADE
+ON UPDATE CASCADE,
+CHECK (idSeguido <> idSeguidor)
 );
 
 -- Creación de la tabla CuentaLeePublicacion
@@ -188,18 +188,15 @@ foreign key (pkfkPublicacion) REFERENCES Publicaciones(isbn)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
-
-SELECT*FROM SUSCRIPCIONES;
-SELECT*FROM Usuarios;
-SELECT*FROM CUENTAS;
-SELECT*FROM Editoriales;
-SELECT*FROM Autores;
-SELECT*FROM publicaciones;
-Select*from comics;
-Select*from Ebooks;
-Select*from Listas;
-Select*from resennas;
-Select*from ListaContienePublicaciones;
-Select*from Megusta;
-Select*from CuentaSigueCuenta;
-Select*from cuentaleepublicacion;
+select*from cuentas;
+select*from usuarios;
+select*from autores;
+select*from editoriales;
+select*from publicaciones;
+select*from comics;
+select*from ebooks;
+select*from suscripciones;
+select*from resennas;
+select*from cuentaSigueCuenta;
+select*from listas;
+select*from ListaContienePublicaciones;

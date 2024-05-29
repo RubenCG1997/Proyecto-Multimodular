@@ -1,16 +1,16 @@
 USE ProyectoFinal;
 
 -- Inserción de datos en la tabla Usuarios --
-INSERT INTO Usuarios (dni, nombre, apellidos, email, fecha_de_nacimiento, rol, estado) VALUES
-('12345678A', 'Juan', 'Pérez', 'juan.perez@example.com', '1980-01-01', false, true),
-('23456789B', 'María', 'González', 'maria.gonzalez@example.com', '1990-02-02', false, true),
-('34567890C', 'Carlos', 'Sánchez', 'carlos.sanchez@example.com', '1985-03-03', true, true);
+INSERT INTO Usuarios (dni, nombre, apellidos, email, contrasenna, fecha_de_nacimiento, rol, estado) VALUES
+('12345678A', 'Juan', 'Pérez', 'juan.perez@example.com', '111111', '1980-01-01', 1, 0),
+('23456789B', 'María', 'González', 'maria.gonzalez@example.com','11111', '1990-02-02', 1, 0),
+('34567890C', 'Carlos', 'Sánchez', 'carlos.sanchez@example.com','11111', '1985-03-03', 1, 0);
 
 -- Inserción de datos en la tabla Suscripciones --
-INSERT INTO Suscripciones (nombre, precio, estado) VALUES
-('Básica', 9.99, true),
-('Premium', 19.99, true),
-('VIP', 29.99, true);
+INSERT INTO Suscripciones (tipo, cuota, precio) VALUES 
+('INDIVIDUAL', 'MENSUAL', 9.99),
+('DUO', 'ANUAL', 19.99),
+('FAMILIAR', 'ANUAL', 29.99);
 
 -- Inserción de datos en la tabla Autores --
 INSERT INTO Autores (nombre, apellidos, fecha_de_nacimiento, biografía, estado) VALUES
@@ -25,16 +25,17 @@ INSERT INTO Editoriales (cif, nombre, direccion, telefono, cp, estado) VALUES
 ('C34567890', 'HarperCollins', 'Paseo de la Reforma 100', '345678901', '06060', true);
 
 -- Inserción de datos en la tabla Cuentas --
-INSERT INTO Cuentas (username, fecha_de_creacion, estado, fkUsuario, fkSuscripciones) VALUES
-('juanp', '2023-01-01', true, '12345678A', 1),
-('mariag', '2023-02-01', true, '23456789B', 2),
-('carloss', '2023-03-01', true, '34567890C', 3);
+INSERT INTO Cuentas (username, fecha_de_creacion, fkUsuario, fkSuscripciones) VALUES
+('juanp', '2023-01-01',  '12345678A', 1),
+('mariag', '2023-02-01', '23456789B', 2),
+('carloss', '2023-03-01', '34567890C', 3);
 
 -- Inserción de datos en la tabla Publicaciones --
-INSERT INTO Publicaciones (isbn, titulo, fecha_de_lanzamiento, estado, fkAutor, fkEditorial) VALUES
-('9781234567897', 'Cien Años de Soledad', '1967-05-30', true, 1, 'A12345678'),
-('9782345678908', 'La Casa de los Espíritus', '1982-01-01', true, 2, 'B23456789'),
-('9783456789019', 'Harry Potter y la Piedra Filosofal', '1997-06-26', true, 3, 'C34567890');
+INSERT INTO Publicaciones (isbn, titulo, fecha_de_lanzamiento, estado, fkAutorNombre, fkAutorApellidos, fkEditorial) VALUES
+('9781234567897', 'Cien Años de Soledad', '1967-05-30', true, 'Gabriel', 'García Márquez', 'A12345678'),
+('9782345678908', 'La Casa de los Espíritus', '1982-01-01', true, 'Isabel', 'Allende', 'B23456789'),
+('9783456789019', 'Harry Potter y la Piedra Filosofal', '1997-06-26', true, 'J.K.', 'Rowling', 'C34567890');
+
 
 -- Inserción de datos en la tabla Comics --
 INSERT INTO Comics (pkfkPublicacion, color) VALUES
@@ -80,3 +81,4 @@ INSERT INTO CuentaLeePublicacion (pkfkCuenta, pkfkPublicacion, porcentaje) VALUE
 (1, '9781234567897', 100),
 (2, '9782345678908', 50),
 (3, '9783456789019', 75);
+
